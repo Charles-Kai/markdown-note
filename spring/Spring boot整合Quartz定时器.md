@@ -12,7 +12,7 @@
 
 ## 二、落地实现
 
-> 根据[若依脚手架](http://doc.ruoyi.vip/#/standard/htsc?id=定时任务)的文档可知，定时任务工程模块为ruoyi-quartz，结合sql/quartz.sql导入关于定时器数据库表。当然这种做法需要数据库和bootstrap，为了简化，我采取的替代方案是保留定时加立即执行功能，抛弃手动在代码才能新加定时器，web管理面板则通过swagger。	
+> 根据[若依脚手架](http://doc.ruoyi.vip/#/standard/htsc?id=定时任务)的文档可知，定时任务工程模块为ruoyi-quartz，结合sql/quartz.sql导入关于定时器数据库表。当然这种做法需要数据库和bootstrap，为了简化，我采取的替代方案是保留定时和立即执行功能，抛弃手动在代码硬编码新加定时器，web管理面板则通过swagger触发任务调度立即执行一次。极端偷懒方式，@Scheduled(cron = "")放在在cotroller方法，同事推荐给我的😀。
 
 #### 1、添加依赖
 
@@ -64,7 +64,7 @@ public class QuartzConfig {
 
 ```
 
-#### 4、任务详情继承QuartzJobBean
+#### 4、任务详情继承QuartzJobBean或者实现Job接口
 
 ```java
 @Slf4j
