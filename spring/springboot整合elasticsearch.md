@@ -33,7 +33,7 @@ spring.data.elasticsearch.cluster-name=my-application
 spring.data.elasticsearch.cluster-nodes=localhost:9300
 ```
 
-#### 3、RabbitListener发送消息同步数据
+#### 3、DWMQSender包装rabbitTemplate发送消息同步数据
 
 ```java
 //服务类的简写如下
