@@ -12,7 +12,7 @@
 
 ## 二、落地实现
 
-> 根据[码云企业级搜索脚手架](https://gitee.com/11230595/springboot-elasticsearch)的文档可知，注意版本为Springboot2.1.1+elasticsearch6.5.3，elasticsearch和analysis-ik插件版本必须统一，而且新版本elasticsearch 7不适用于该工程。这个参考工程的中文分词搜索效果不太理想，一般富文本的内容进入索引之前要利用字符过滤器清洗不正常的字符，我会在例子会修改原来的代码。通常为了保证索引时覆盖度和搜索时准确度,索引分词器采用ik_max_word,搜索分析器采用ik_smart模式。具体elasticsearch6.5.3的安装过程请参考码云的README.md，目前正在在公司项目使用请放心，单元测试的效果也非常nice。
+> 根据[码云企业级搜索脚手架](https://gitee.com/11230595/springboot-elasticsearch)的文档可知，注意版本为Springboot2.1.1+elasticsearch6.5.3，elasticsearch和analysis-ik插件版本必须统一，而且新版本elasticsearch 7不适用于该工程。这个参考工程的中文分词搜索效果不太理想，一般富文本的内容进入索引之前要利用字符过滤器清洗不正常的字符。通常为了保证索引时覆盖度和搜索时准确度,索引分词器采用ik_max_word,搜索分析器采用ik_smart模式。具体elasticsearch6.5.3的安装过程请参考码云的README.md，目前正在在公司项目使用请放心，单元测试的效果也非常nice。
 
 #### 1、添加依赖
 
@@ -172,14 +172,7 @@ public class ArticlesReceiver extends DWMQBaseReceiver<String> {
     @Override
     public IPage<Map<String, Object>> queryHitByPage(int pageNo, int pageSize, String keyword, String indexName, String... fieldNames) {
         // 构造查询条件,使用标准分词器.
-//      原本脚手架的：QueryBuilder matchQuery = createQueryBuilder(keyword, fieldNames);
-//      修改成把搜索内容字符串转换成单字符的数组，遍历并BoolQueryBuilder.should至少有一个语句要匹配，与 OR 等价。        
-        char[] chars = keyword.toCharArray();
-        BoolQueryBuilder bool = QueryBuilders.boolQuery();
-        for (char word : chars) {
-            QueryBuilder queryBuilder = createQueryBuilder(String.valueOf(word), fieldNames);
-            bool.should(queryBuilder);
-        }
+        QueryBuilder matchQuery = createQueryBuilder(keyword, fieldNames);
         // 设置高亮,使用默认的highlighter高亮器
         HighlightBuilder highlightBuilder = createHighlightBuilder(fieldNames);
         // 设置查询字段
