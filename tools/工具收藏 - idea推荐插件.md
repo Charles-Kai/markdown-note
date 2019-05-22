@@ -1,0 +1,27 @@
+## 工具收藏 - idea推荐插件 ##
+
+## 一、概念
+
+> ​	工欲善其事必先利其器，博主是个死忠工具派，为了解决一个大问题可能会收集多个工具和方案，然后求证对比出体验报告。后续文章有一大类就是工具类推荐，而本篇文章重点就是idea 安装插件记录，简要记录安装方法快速搭建个性化idea。
+
+----------
+
+## 插件列表
+
+
+
+| 名称                  | 描述                                                         |
+| --------------------- | ------------------------------------------------------------ |
+| AceJump               | 光标跳跃，替代vim不二之选                                    |
+| MavenHelper           | 快速分析maven 包冲突的问题，搜索报名                         |
+| MyBatis Log Plugin    | Restore the mybatis generate sql to original whole sql.（免费） |
+| Log Support 2         | 快速log.info()，结合Lombok插件注解@Slf4j可以说无敌           |
+| Free Mybatis plugin   | Mybaits支持跳转，语法提示                                    |
+| Rainbow Brackets      | 彩虹括号，多层嵌套代码显示助手                               |
+| String Manipulation   | 各种各样字符串格式转化                                       |
+| RestfulToolkit        | 一套 RESTful 服务开发辅助工具集                              |
+| Alibaba Cloud Toolkit | 结合阿里云（非阿里也支持），多节点发布工具加强力linux客户端  |
+| stackoverflow         | stackoverflow快速搜索bug插件                                 |
+| Translation           | 最强大的翻译插件，支持中文替换英文，解决起英文变量名难的重度患者 |
+| Key Promoter X        | 所有操作的快捷键提示                                         |
+
