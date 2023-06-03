@@ -314,3 +314,44 @@ java
 在上面的示例代码中，我们在创建 DiffCommand 对象时使用 PathFilter.create("*.{txt,md,java,cpp}") 方法设置文件类型过滤条件，只处理后缀为 .txt、.md、.java 和 .cpp 的文件。在循环中使用正则表达式判断文件路径是否符合该条件。如果不符合，则表示该文件为二进制文件，跳过处理；如果符合，则按照之前的方式输出文件内容。
 
 需要注意的是，在实际应用中，文件类型过滤条件可以根据具体需求进行修改。同时，也可以使用其他方式进行文件类型判断，比如通过文件头部信息或者 MIME 类型等。
+
+Eclipse 开源代码中，哪个类是获取commit的文件变化的内容的
+
+2023/6/3 11:43:59
+
+在 Eclipse 开源代码中，获取 Git commit 中的文件变化内容的类是 org.eclipse.jgit.diff.DiffFormatter。该类是 JGit 库中的一部分，用于格式化 Git 中的文件差异。
+
+DiffFormatter 类提供了多种输出格式，例如原始的 Git 格式、统一的上下文格式等。其中，最常用的是统一的上下文格式（Unified Context Format），它以文本形式显示两个文件之间的差异，并将输出结果按照一定规则进行排版。
+
+以下是一个示例代码片段，使用 DiffFormatter 类获取指定提交的文件变化内容：
+
+java
+Repository repository = new FileRepository(new File("/path/to/git/repo/.git"));
+Git git = new Git(repository);
+RevCommit commit = git.log().call().iterator().next();
+
+// 获取此次提交与其父提交之间的差异
+ObjectId oldHead = commit.getParent(0).getId();
+ObjectId head = commit.getId();
+ObjectReader reader = repository.newObjectReader();
+CanonicalTreeParser oldTreeIter = new CanonicalTreeParser();
+oldTreeIter.reset(reader, oldHead);
+CanonicalTreeParser newTreeIter = new CanonicalTreeParser();
+newTreeIter.reset(reader, head);
+
+List<DiffEntry> diffs = git.diff()
+        .setNewTree(newTreeIter)
+        .setOldTree(oldTreeIter)
+        .call();
+
+DiffFormatter formatter = new DiffFormatter(DisabledOutputStream.INSTANCE);
+formatter.setRepository(repository);
+
+for (DiffEntry entry : diffs) {
+    formatter.format(entry);
+    System.out.println("Commit " + head.name() + ": " + entry.getNewPath());
+    System.out.println(formatter.toString());
+}
+该代码片段会打开指定目录下的 Git 仓库，并读取其中的第一个提交记录。然后使用 git.diff() 方法获取该提交与其父提交之间的文件差异。接着，使用 DiffFormatter 类对每个差异进行格式化，并打印输出结果。
+
+需要注意的是，DiffFormatter 类只能用于获取两个文件之间的差异，如果要获取多个文件的差异，则需要在循环中依次调用 formatter.format() 方法。此外，DiffFormatter 类也可以通过一些选项控制输出内容的格式和样式，例如设置行号、上下文大小等。
