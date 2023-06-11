@@ -393,4 +393,103 @@ docker run -d -p %docker_port%:%docker_port% --name %docker_container% %docker_i
 您可以将上述脚本保存为名为 run.bat 的文件，并将其放置到包含 JAR 文件和 Dockerfile 的目录中。然后，在 Git Bash 中切换到该目录，执行以下命令即可运行脚本：
 
 ./run.bat
-希望这个示例对您有所帮助！
+
+
+fabric8io插件把springboot打包成k8s镜像，部署到k8s
+
+2023/6/11 18:26:54
+
+fabric8io插件是一款非常方便的工具，可以帮助开发者将Spring Boot应用程序打包成Kubernetes镜像，并将其部署到Kubernetes集群中。
+
+使用fabric8io插件，您可以通过以下步骤将Spring Boot应用程序打包成Kubernetes镜像并将其部署到Kubernetes集群中：
+
+首先，在pom.xml文件中添加fabric8io插件的依赖关系：
+<dependency>
+    <groupId>io.fabric8</groupId>
+    <artifactId>fabric8-maven-plugin</artifactId>
+    <version>4.0.0</version>
+</dependency>
+接下来，在maven配置文件中添加fabric8io插件的配置信息，例如：
+<plugin>
+    <groupId>io.fabric8</groupId>
+    <artifactId>fabric8-maven-plugin</artifactId>
+    <version>4.0.0</version>
+    <configuration>
+        <dockerImage>${project.groupId}/${project.artifactId}:${project.version}</dockerImage>
+        <generator>
+            <config>
+                <from>spring-boot</from>
+            </config>
+        </generator>
+    </configuration>
+    <executions>
+        <execution>
+            <goals>
+                <goal>build</goal>
+                <goal>resource</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+最后，执行以下命令将应用程序构建成Kubernetes镜像并将其部署到Kubernetes集群：
+mvn clean install fabric8:deploy
+这将使用fabric8io插件构建Docker镜像、生成Kubernetes部署清单并将其应用于Kubernetes集群。
+
+需要注意的是，您需要在执行此操作之前确保正确配置了Kubernetes集群，并且拥有访问该集群的权限。
+
+
+
+
+2023/6/11 18:27:24
+
+部署本地k8s需要yml
+
+2023/6/11 18:27:37
+
+是的，要在本地Kubernetes集群中部署应用程序，您需要使用YAML文件定义Kubernetes对象（例如Pod、Service、Deployment等）。这些YAML文件描述了Kubernetes集群中的对象和它们之间的关系。以下是一个示例YAML文件，它描述了一个简单的Deployment：
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-deployment
+  labels:
+    app: example-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: example-app
+  template:
+    metadata:
+      labels:
+        app: example-app
+    spec:
+      containers:
+        - name: example-container
+          image: your-image-name
+          ports:
+            - containerPort: 8080
+在这个示例中，YAML文件定义了一个名为"example-deployment"的Deployment对象，该对象包含三个Pod副本，并将它们标记为"app=example-app"。每个Pod包含一个名为"example-container"的容器，容器运行名为"your-image-name"的Docker镜像，并暴露端口号8080。
+
+您可以使用kubectl命令行工具来创建和管理这些对象。例如，要创建上述Deployment对象，请将YAML文件保存为"example-deployment.yaml"并执行以下命令：
+
+kubectl apply -f example-deployment.yaml
+这将在您的Kubernetes集群中创建一个名为"example-deployment"的Deployment对象，该对象将自动创建三个Pod实例。
+
+
+
+
+2023/6/11 18:28:10
+
+fabric8io会自动识别该yml文件？
+
+2023/6/11 18:28:20
+
+fabric8io插件可以自动识别Kubernetes YAML文件，并根据这些文件创建或更新Kubernetes对象。在使用fabric8io插件时，只需将YAML文件放置在src/main/fabric8/kubernetes文件夹中即可。
+
+例如，如果您有一个名为"example-deployment.yaml"的Kubernetes Deployment YAML文件，可以将其放置在src/main/fabric8/kubernetes文件夹中，然后执行以下命令：
+
+mvn clean install fabric8:deploy
+这将使用fabric8io插件将该YAML文件加载到Kubernetes集群中，并创建或更新Kubernetes Deployment对象。如果您想要手动创建或更新Kubernetes对象，也可以使用kubectl命令行工具来执行相应的操作。
+
+需要注意的是，fabric8io插件提供了一些有用的特性，例如可以使用Maven属性和插值操作在YAML文件中设置变量值。最终的Kubernetes YAML文件将包含实际的变量值，这使得部署到不同环境的应用程序变得更加容易。
