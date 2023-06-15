@@ -324,3 +324,228 @@ json
 	]
 }
 这是一个简单的三层流程图，其中 frontend 调用 backend-1 ，而 backend-1 又调用 database-1 。每个节点都有一个唯一的ID和名称，以及其所属的应用程序组件和层名称。链接指定源节点和目标节点之间的关系，包括类型和是否已启用检测。
+
+
+
+要使用AppDynamics agent-api jar中的flowmap接口，并且不需要提供返回的JSON数据，您可以按照以下步骤操作：
+
+首先，您需要下载和安装AppDynamics Java Agent并将其添加到您的应用程序中。请确保代理与您的应用程序正确集成，并且能够在控制器中进行注册和显示。
+下载并添加 agent-api.jar 到您的项目依赖中。
+在您的Java代码中，导入必要的类和包，例如：
+java
+import com.appdynamics.agent.api.AppdynamicsAgent;
+import com.appdynamics.agent.api.flowmap.*;
+获得 FlowMapService 实例以调用flowmap服务。一个示例代码片段如下：
+java
+FlowMapService flowMapService = AppdynamicsAgent.getFlowMapService();
+为应用程序或组件检索流程图，请使用以下样式的URL：
+java
+//get application flowmap
+String applicationId = "1234";
+String timeRange = "last_1_hour.BEFORE_NOW.-1.-1.60";
+FlowMap flowMap = flowMapService.getApplicationFlowMap(applicationId, timeRange);
+
+//get component flowmap
+String componentId = "5678";
+FlowMap componentFlowMap = flowMapService.getComponentFlowMap(componentId, timeRange);
+其中，applicationId 和 componentId 分别是您想要检索流程图的应用程序/组件的ID，timeRange 是指定时间范围的字符串。注意，如果您要检索应用程序流程图，则必须将 mapId 和 baselineId 设置为 -1，否则将返回错误响应。
+
+这里是两个获取Flowmap的示例，它们不会提供返回的JSON数据，但是您可以使用其他方法来处理返回的FlowMap对象。例如，您可以迭代节点和链接，以从中检索所需的信息，或者将FlowMap对象转换为字符串或其他格式。
+
+如果您想要从FlowMap对象中获取节点和链接，请使用以下代码片段：
+
+java
+List<FlowMapNode> nodes = flowMap.getNodes();
+List<FlowMapLink> links = flowMap.getLinks();
+其中，nodes 列表包含所有节点对象，每个节点都包含其ID，名称等信息。同样，links 列表包含所有链接对象，包括源节点和目标节点之间的关系。
+
+希望这可以回答您的问题。
+
+
+
+
+2023/6/16 00:09:56
+
+提供完整的代码例子
+
+2023/6/16 00:10:21
+
+以下是一个完整的Java代码示例，演示如何使用AppDynamics agent-api jar中的flowmap接口来检索流程图，并迭代节点和链接：
+
+java
+import com.appdynamics.agent.api.AppdynamicsAgent;
+import com.appdynamics.agent.api.flowmap.*;
+
+import java.util.List;
+
+public class AppDynamicsFlowMapExample {
+
+    public static void main(String[] args) {
+        // Replace with your actual application/component ID and time range
+        String applicationId = "1234";
+        String componentId = "5678";
+        String timeRange = "last_1_hour.BEFORE_NOW.-1.-1.60";
+
+        // Get the FlowMapService instance
+        FlowMapService flowMapService = AppdynamicsAgent.getFlowMapService();
+
+        // Get the application flowmap and print out the nodes and links
+        FlowMap appFlowMap = flowMapService.getApplicationFlowMap(applicationId, timeRange);
+        System.out.println("Application Flowmap:");
+        printNodesAndLinks(appFlowMap.getNodes(), appFlowMap.getLinks());
+
+        // Get the component flowmap and print out the nodes and links
+        FlowMap compFlowMap = flowMapService.getComponentFlowMap(componentId, timeRange);
+        System.out.println("Component Flowmap:");
+        printNodesAndLinks(compFlowMap.getNodes(), compFlowMap.getLinks());
+    }
+
+    private static void printNodesAndLinks(List<FlowMapNode> nodes, List<FlowMapLink> links) {
+        // Print out the nodes
+        System.out.println("Nodes:");
+        for (FlowMapNode node : nodes) {
+            System.out.printf("\tID: %d, Name: %s, Type: %s%n", node.getId(), node.getName(), node.getType());
+        }
+
+        // Print out the links
+        System.out.println("Links:");
+        for (FlowMapLink link : links) {
+            System.out.printf("\tSource: %d, Target: %d, Type: %s%n", link.getSource(), link.getTarget(), link.getLinkType());
+        }
+    }
+
+}
+在此示例中，首先获得了 FlowMapService 实例，然后使用它来检索应用程序和组件流程图。使用 printNodesAndLinks() 方法迭代节点和链接，并打印其 ID、名称和类型等信息。
+
+请注意，您需要将 applicationId 和 componentId 替换为实际的应用程序/组件 ID，并将 timeRange 设置为指定的时间范围字符串。
+
+
+
+
+2023/6/16 00:11:01
+
+例子中如何初始化AppDRESTClient 
+
+2023/6/16 00:11:22
+
+在上面的代码示例中，我们没有使用 AppDRESTClient。而是直接使用了 FlowMapService 的方法来检索应用程序和组件流程图。
+
+如果您需要使用 AppDRESTClient 来进行其他类型的REST API调用，则可以按照以下步骤初始化它：
+
+java
+import com.appdynamics.agent.api.AppdynamicsAgent;
+import com.appdynamics.agent.api.rest.RestApi;
+import com.appdynamics.agent.api.rest.RestApiBuilder;
+
+public class AppDynamicsRestClientExample {
+
+    public static void main(String[] args) {
+        // Replace with your actual controller host, port, user and password
+        String controllerHost = "localhost";
+        int controllerPort = 8090;
+        String controllerUser = "admin";
+        String controllerPassword = "password";
+
+        // Build the RestApi instance
+        RestApi restApi = new RestApiBuilder()
+                .host(controllerHost)
+                .port(controllerPort)
+                .user(controllerUser)
+                .password(controllerPassword)
+                .ssl(false) // Set to true if using HTTPS
+                .build();
+
+        // Use the RestApi instance to make REST API calls
+        // ...
+    }
+
+}
+在此示例中，我们使用 RestApiBuilder 构建器来构建 RestApi 实例，该实例指定了控制器主机名、端口号、用户名和密码等信息。注意，在使用HTTPS时，需要将 .ssl(false) 更改为 .ssl(true)。
+
+一旦构建了 RestApi 实例，您就可以使用其它方法来进行REST API调用，例如：
+
+java
+// Get all applications
+List<Application> applications = restApi.getAllApplications();
+for (Application application : applications) {
+    System.out.printf("ID: %d, Name: %s%n", application.getId(), application.getName());
+}
+希望这些信息对您有所帮助。
+
+
+
+
+2023/6/16 00:11:57
+
+例子缺少获取flowmap接口，不需要提供返回的json数据例子:
+  title: Flowmap
+  description: Retrieve flowmaps
+  application:
+    title: Get an application flowmap
+    description: Provide an application (-a) and a time range string (-t) as parameter.
+    example: -a 41 -t last_1_hour.BEFORE_NOW.-1.-1.60
+    method: GET
+    endpoint: /controller/restui/applicationFlowMapUiService/application/{{a:application}}?time-range={{t:timerange}}&mapId=-1&baselineId=-1&forceFetch=false
+  component:
+    title: Get an component flowmap
+    description: Provide an component (tier, node, ...) id (-c) and a time range string (-t) as parameter
+    example: -c 108 -t last_1_hour.BEFOREW_NOW.-1.-1.60
+    method: GET
+    endpoint: /controller/restui/componentFlowMapUiService/component/{{c:component}}?time-range={{t:timerange}}&mapId=-1&baselineId=-1
+
+2023/6/16 00:12:28
+
+非常抱歉，之前的回答中确实遗漏了使用AppDynamics REST API获取flowmap接口时不需要提供返回JSON数据的例子。以下是获取应用程序和组件流程图的完整代码示例：
+
+java
+import com.appdynamics.agent.api.AppdynamicsAgent;
+import com.appdynamics.agent.api.flowmap.FlowMap;
+import com.appdynamics.agent.api.flowmap.FlowMapNode;
+import com.appdynamics.agent.api.flowmap.FlowMapLink;
+
+import java.util.List;
+
+public class AppDynamicsFlowMapExample {
+
+    public static void main(String[] args) {
+        // Replace with your actual application/component ID and time range
+        String applicationId = "1234";
+        String componentId = "5678";
+        String timeRange = "last_1_hour.BEFORE_NOW.-1.-1.60";
+
+        // Get the FlowMapService instance
+        FlowMapService flowMapService = AppdynamicsAgent.getFlowMapService();
+
+        // Get the application flowmap
+        FlowMap appFlowMap = flowMapService.getApplicationFlowMap(applicationId, timeRange);
+
+        // Print out the nodes and links of the application flowmap
+        System.out.println("Application Flowmap:");
+        printNodesAndLinks(appFlowMap.getNodes(), appFlowMap.getLinks());
+
+        // Get the component flowmap
+        FlowMap compFlowMap = flowMapService.getComponentFlowMap(componentId, timeRange);
+
+        // Print out the nodes and links of the component flowmap
+        System.out.println("Component Flowmap:");
+        printNodesAndLinks(compFlowMap.getNodes(), compFlowMap.getLinks());
+    }
+
+    private static void printNodesAndLinks(List<FlowMapNode> nodes, List<FlowMapLink> links) {
+        // Print out the nodes
+        System.out.println("Nodes:");
+        for (FlowMapNode node : nodes) {
+            System.out.printf("\tID: %d, Name: %s, Type: %s%n", node.getId(), node.getName(), node.getType());
+        }
+
+        // Print out the links
+        System.out.println("Links:");
+        for (FlowMapLink link : links) {
+            System.out.printf("\tSource: %d, Target: %d, Type: %s%n", link.getSource(), link.getTarget(), link.getLinkType());
+        }
+    }
+
+}
+在此示例中，我们使用了 FlowMapService 的方法来检索应用程序和组件流程图，并迭代节点和链接。其中，printNodesAndLinks() 方法用于打印出每个节点和链接的详细信息。
+
+请注意，您需要将 applicationId 和 componentId 替换为实际的应用程序/组件 ID，并将 timeRange 设置为指定的时间范围字符串。
