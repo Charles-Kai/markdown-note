@@ -3,7 +3,9 @@ https://docs.appdynamics.com/appd/4.5.x/en/extend-appdynamics/appdynamics-apis
 命令行工具：https://github.com/Appdynamics/api-commandline-tool/blob/f30c613e45e09c00c6860240ab7c26a523fcf60f/commands.yml#L463
 微软云agent文档配置参考：
 https://learn.microsoft.com/zh-cn/azure/spring-apps/how-to-appdynamics-java-agent-monitor
-
+Java Agent API User Guide，自定义transaction和Metric or Event的记录
+https://docs.appdynamics.com/appd/21.x/21.1/en/application-monitoring/install-app-server-agents/java-agent/use-the-java-agent-api-and-instrumentation-sdk#id-.UsetheJavaAgentAPIandInstrumentationSDKv21.1-JavaAgentAPIandiSDK
+https://sdkdocs.appdynamics.com/javadocs/java-agent-api/v20.6/
 
 何用AppDynamics API获取Flow Maps
 
