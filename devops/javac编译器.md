@@ -1,3 +1,54 @@
+如果你想使用Java源代码分析来获取方法的局部变量调用的方法以及该方法的参数类型和名称，你可以使用JavaParser这个开源库。JavaParser可以将Java源代码解析为抽象语法树（AST），并且可以让你遍历和修改AST。
+
+以下是一个使用JavaParser的例子，它可以获取到方法的局部变量调用的方法以及该方法的参数类型和名称：
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+
+public class MethodAnalyzer {
+    public static void analyze(String sourceCode, String methodName) {
+        CompilationUnit cu = JavaParser.parse(sourceCode);
+
+        new MethodVisitor(methodName).visit(cu, null);
+    }
+
+    private static class MethodVisitor extends VoidVisitorAdapter<Void> {
+        private final String methodName;
+
+        public MethodVisitor(String methodName) {
+            this.methodName = methodName;
+        }
+
+        @Override
+        public void visit(MethodDeclaration md, Void arg) {
+            if (md.getNameAsString().equals(methodName)) {
+                md.accept(new MethodCallVisitor(), null);
+            }
+        }
+    }
+
+    private static class MethodCallVisitor extends VoidVisitorAdapter<Void> {
+        @Override
+        public void visit(MethodCallExpr mce, Void arg) {
+            if (mce.getNameAsString().equals("get")) {
+                for (com.github.javaparser.ast.type.Type type : mce.getArgumentTypes()) {
+                    System.out.println("Method 'get' is called with parameter type: " + type);
+                }
+            }
+        }
+    }
+}
+
+在这个例子中，我们首先使用JavaParser将Java源代码解析为抽象语法树（AST）。然后，我们创建了一个MethodVisitor，它可以访问所有的方法声明，并且检查方法的名称是否与我们要查找的方法名称相同。如果方法的名称相同，那么我们就创建了一个MethodCallVisitor，它可以访问方法内部的所有方法调用。然后，我们检查每个方法调用的名称是否为get，如果是，那么我们就打印出方法调用的参数类型。
+
+请注意，这个例子只能获取到方法调用的参数类型，不能获取到参数的名称。如果你需要获取参数的名称，你可能需要使用其他技术，如反射API或者字节码操作库。
+
+总的来说，使用Java源代码分析来获取方法的局部变量调用的方法以及该方法的参数类型和名称是一项复杂的任务。你需要对Java语法和语义有深入的理解，并且可能需要使用JavaParser或其他技术。 
+
+
 如何用com.sun.tools.javac的方式读取下面代码，获取import的类名：
 package chapter1;
 
