@@ -16,6 +16,38 @@ When using MavenXpp3Writer to write a pom.xml file, it may lose the structure an
 
 To preserve the structure and comments of the original pom.xml file, you can use XmlStreamWriter instead of MavenXpp3Writer. Here's an example code snippet in Java that demonstrates how to do this:
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.codehaus.plexus.util.xml.XmlStreamWriter;
+
+public class PomWriter {
+    public static void main(String[] args) throws IOException {
+        File pomFile = new File("pom.xml");
+        FileInputStream fis = new FileInputStream(pomFile);
+        MavenXpp3Reader reader = new MavenXpp3Reader();
+        Model model = reader.read(fis);
+        fis.close();
+
+        // Modify the model as needed
+
+        FileOutputStream fos = new FileOutputStream(pomFile);
+        Writer writer = new OutputStreamWriter(fos, "UTF-8");
+        XmlStreamWriter xmlWriter = new XmlStreamWriter(writer);
+        xmlWriter.writeStartDocument("UTF-8", "1.0");
+        new MavenXpp3Writer().write(xmlWriter, model);
+        xmlWriter.writeEndDocument();
+        xmlWriter.flush();
+        xmlWriter.close();
+        fos.close();
+    }
+}
+
 In this example, we first read the pom.xml file using MavenXpp3Reader. We then modify the Model object as needed and write it back to the pom.xml file using XmlStreamWriter and MavenXpp3Writer. The XmlStreamWriter is used to preserve the original formatting and comments of the pom.xml file. The order of elements in the pom.xml file will also be preserved. 
 
 import java.io.File;
