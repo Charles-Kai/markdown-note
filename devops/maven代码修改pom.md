@@ -50,36 +50,28 @@ public class PomWriter {
 
 In this example, we first read the pom.xml file using MavenXpp3Reader. We then modify the Model object as needed and write it back to the pom.xml file using XmlStreamWriter and MavenXpp3Writer. The XmlStreamWriter is used to preserve the original formatting and comments of the pom.xml file. The order of elements in the pom.xml file will also be preserved. 
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.LinkedHashSet;
-
+import org.apache.maven.model.InputLocation;
+import org.apache.maven.model.InputLocationTracker;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3ReaderEx;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 
-import groovy.lang.Grab;
-import groovy.lang.GrabResolver;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.LinkedHashSet;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
 
-@GrabResolver(name = "mavenCentral", root = "https://repo1.maven.org/maven2/")
-@Grab(group = "org.apache.maven", module = "maven-model", version = "3.3.9")
-
-public class Main {
+public class MavenModel {
     public static void main(String[] args) throws Exception {
-        File f = new File(args[0]);
+        File f = new File("pom.xml");
         MavenXpp3ReaderEx reader = new MavenXpp3ReaderEx();
         Model model = reader.read(new FileInputStream(f), true, null);
 
-        // your modifications
-        model.getProperties().setProperty("plexusVersion","99.99");
-
         // reorder properties keys by line number
-        Model.InputLocationTracker locations = model.getLocationTracker().getLocation( "properties" );
+       InputLocationTracker locations = model.getLocation( "properties" );
 
         TreeMap<Integer, String> mapByLine = new TreeMap<Integer, String>();
 
@@ -88,7 +80,7 @@ public class Main {
 
         for (Object key : keys) {
             Object val = props.get(key);
-            Model.InputLocation keyLoc = locations.getLocation((String)key);
+            InputLocation keyLoc = locations.getLocation((String)key);
             mapByLine.put(keyLoc.getLineNumber(), (String)key);
         }
 
