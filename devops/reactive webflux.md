@@ -1,5 +1,7 @@
 https://springdoc.cn/spring-webflux-retry/
 
+https://github.com/spring-projects/spring-framework/blob/main/spring-webflux/src/test/java/org/springframework/web/reactive/function/client/WebClientIntegrationTests.java
+
 https://www.yuque.com/leifengyang/springboot3
 
 https://gitee.com/leifengyang/spring-boot-3/tree/master
