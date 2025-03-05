@@ -2,6 +2,8 @@ pjsip最好文档：https://trac.pjsip.org/repos/wiki/Getting-Started/Autoconf
 
 超级牛逼的博客https://github.com/onmyway133/blog/issues/284
 
+https://onmyway133.com/
+
  https://m.bilibili.com/video/BV1fsSoYdESL 教程配套https://github.com/keithcroxford/kamailio-course/tree/main
 
 rtp代理：https://github.com/sippy/rtpproxy
