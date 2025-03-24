@@ -16,3 +16,7 @@ whisper简易版https://github.com/SYSTRAN/faster-whisper
 
 kamailio：https://github.com/altanai/kamailioexamples
 https://book.dujinfang.com
+
+rtpengine：
+https://www.robertolucchetti.eu/en/post/rtpengine-setup/
+https://github.com/ghostxbh/uzykj-docs/blob/master/_posts%2Flinux%2Fcentos%2F2020-11-23-rtpengine.md
